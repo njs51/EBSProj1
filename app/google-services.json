@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "41181239978",
+    "firebase_url": "https://ebsproj1.firebaseio.com",
+    "project_id": "ebsproj1",
+    "storage_bucket": "ebsproj1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:41181239978:android:74d2d4062a39aae7",
+        "android_client_info": {
+          "package_name": "com.example.jiseongnam.ebsproj1"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "41181239978-4mnede7f33r65cro2a73qg3682l0bqfj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCOZXq9d32R5L91Jkc5vpo3IA9IGGOAU0U"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
