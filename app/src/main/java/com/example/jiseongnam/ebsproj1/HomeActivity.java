@@ -1,5 +1,8 @@
 package com.example.jiseongnam.ebsproj1;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -9,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -76,7 +80,21 @@ public class HomeActivity extends AppCompatActivity {
             ((CustomViewHolder)holder).title.setText(adapters.get(position).title);
 
            // Picasso.with(holder.itemView.getContext()).load(adapters.get(position).imageUrl).into(((CustomViewHolder)holder).imageView);
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Toast.makeText(getApplicationContext(),"is it working?", Toast.LENGTH_LONG).show();
 
+                    putPreferences(getApplicationContext(), "id", adapters.get(position).id);
+                    putPreferences(getApplicationContext(), "title", adapters.get(position).title);
+                    putPreferences(getApplicationContext(), "mp3link", adapters.get(position).mp3_link);
+                    putPreferences(getApplicationContext(), "engtxt", adapters.get(position).txt1_A1_ENG);
+                    putPreferences(getApplicationContext(), "kortxt", adapters.get(position).txt1_A1_KOR);
+
+                    Intent intent = new Intent(HomeActivity.this, ReadActivity.class);
+                    startActivity(intent);
+                }
+            });
         }
         @Override
         public int getItemCount() {
@@ -94,6 +112,13 @@ public class HomeActivity extends AppCompatActivity {
 
             }
         }
+    }
+
+    private void putPreferences(Context context, String key, String value) {
+        SharedPreferences pref = context.getSharedPreferences("adapter", context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putString(key, value);
+        editor.apply();
     }
 }
 
