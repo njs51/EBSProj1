@@ -1,5 +1,6 @@
 package com.example.jiseongnam.ebsproj1;
 
+import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -16,13 +17,14 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseDatabase database;
 
     Button mp3btn;
+    Button homebtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mp3btn = (Button)findViewById(R.id.bt_mp3load);
+        mp3btn = (Button)findViewById(R.id.btn_mp3);
         mp3btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -44,6 +46,15 @@ public class MainActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
 
+            }
+        });
+
+        homebtn = (Button)findViewById(R.id.btn_home);
+        homebtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, HomeActivity.class);
+                startActivity(intent);
             }
         });
 

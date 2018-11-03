@@ -1,21 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+<Button
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="com.example.jiseongnam.ebsproj1.MainActivity">
-
+    android:layout_height="wrap_content"
+    android:text="mp3Button"
+    android:id="@+id/btn_mp3"
+    />
     <Button
-        android:id="@+id/bt_mp3load"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="Button"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        android:text="homeButton"
+        android:id="@+id/btn_home"
         />
-
-</android.support.constraint.ConstraintLayout>
+</LinearLayout>
