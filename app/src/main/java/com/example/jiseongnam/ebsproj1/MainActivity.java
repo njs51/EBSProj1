@@ -18,6 +18,7 @@ public class MainActivity extends AppCompatActivity {
 
     Button mp3btn;
     Button homebtn;
+    Button voicebtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,5 +59,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        voicebtn = (Button)findViewById(R.id.btn_voice);
+        voicebtn.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view){
+                Intent intent = new Intent(MainActivity.this, VoiceActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 }

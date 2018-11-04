@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,6 +51,8 @@ public class HomeActivity extends AppCompatActivity {
 
                 adapters.clear();
                 for(DataSnapshot snapshot : dataSnapshot.getChildren()){
+                    Log.d(this.getClass().getName(),"여기쿼리는되나?????????????????????????????????????");
+
                     adapter adapter = snapshot.getValue(adapter.class);
                     adapters.add(adapter);
                 }
@@ -91,6 +94,7 @@ public class HomeActivity extends AppCompatActivity {
                     putPreferences(getApplicationContext(), "engtxt", adapters.get(position).txt1_A1_ENG);
                     putPreferences(getApplicationContext(), "kortxt", adapters.get(position).txt1_A1_KOR);
 
+                    Log.d(this.getClass().getName(),"다운되나?????????????????????????????????????");
                     Intent intent = new Intent(HomeActivity.this, ReadActivity.class);
                     startActivity(intent);
                 }

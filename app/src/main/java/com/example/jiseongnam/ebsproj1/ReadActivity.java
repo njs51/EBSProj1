@@ -6,21 +6,15 @@ import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.TextView;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class ReadActivity extends AppCompatActivity {
 
-    private List<adapter> adapters = new ArrayList<>();
     private FirebaseDatabase database;
 
     TextView tv_id;
@@ -29,6 +23,7 @@ public class ReadActivity extends AppCompatActivity {
     TextView tv_kortxt;
     public String speaking_id;
     public String mp3link;
+    readmodel readmodel;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -36,48 +31,50 @@ public class ReadActivity extends AppCompatActivity {
         SharedPreferences pref = getApplicationContext().getSharedPreferences("adapter", getApplicationContext().MODE_PRIVATE);
         setContentView(R.layout.activity_read);
 
-        database = FirebaseDatabase.getInstance();
-
         tv_id = (TextView)findViewById(R.id.item_id);
         tv_title = (TextView)findViewById(R.id.item_title);
         tv_engtxt = (TextView)findViewById(R.id.txt_eng);
         tv_kortxt = (TextView)findViewById(R.id.txt_kor);
 
         speaking_id = pref.getString("id","");
-        //mp3link = pref.getString("mp3link","");
+        mp3link = pref.getString("mp3link","");
+        tv_id.setText(pref.getString("id",""));
+        tv_title.setText(pref.getString("title",""));
+        tv_engtxt.setText(pref.getString("engtxt",""));
+        tv_kortxt.setText(pref.getString("kortxt",""));
+
+        Log.d(this.getClass().getName(),"오픈되나?????????????????????????????????????");
+
+       //Query query = FirebaseDatabase.getInstance().getReference().child("speaking").orderByChild("id");
+        System.out.println(speaking_id);
 
 
-        Query query = database.getReference().child("speaking").orderByChild("id").equalTo(speaking_id.toString());
-
-
-        query.addValueEventListener(new ValueEventListener() {
+        /**
+        FirebaseDatabase.getInstance().getReference().child("speaking").orderByChild("id").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
-                adapters.clear();
-                for(DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    adapter adapter = snapshot.getValue(adapter.class);
+                for(DataSnapshot snapshot :dataSnapshot.getChildren()) {
 
-                    mp3link = adapter.mp3_link;
-                    tv_id.setText(adapter.id);
-                    tv_title.setText(adapter.title);
-                    tv_engtxt.setText(adapter.txt1_A1_ENG);
-                    tv_kortxt.setText(adapter.txt1_A1_KOR);
+                    Log.d(this.getClass().getName(), "쿼리되나?????????????????????????????????????");
+                    readmodel = snapshot.getValue(readmodel.class);
 
-                    adapters.add(adapter);
+
                 }
+
             }
+
             @Override
             public void onCancelled(DatabaseError databaseError) {
 
             }
         });
-
-
-
+        **/
         MediaPlayer mediaPlayer = new MediaPlayer();
         try
         {
+            Log.d(this.getClass().getName(),"음악되나?????????????????????????????????????");
+
             mediaPlayer.setDataSource(mp3link);
             mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                 @Override
