@@ -28,7 +28,7 @@ public class HomeActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
 
-    private List<adapter> adapters = new ArrayList<>();
+    private List<post> posts = new ArrayList<>();
     private FirebaseDatabase database;
 
     @Override
@@ -43,18 +43,18 @@ public class HomeActivity extends AppCompatActivity {
         final BoardRecyclerViewAdapter boardRecyclerViewAdapter = new BoardRecyclerViewAdapter();
         recyclerView.setAdapter(boardRecyclerViewAdapter);
 
-        Query query = database.getReference().child("speaking").orderByChild("id");
+        Query query = database.getReference().child("post").orderByChild("id");
 
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
-                adapters.clear();
+                posts.clear();
                 for(DataSnapshot snapshot : dataSnapshot.getChildren()){
-                    Log.d(this.getClass().getName(),"여기쿼리는되나?????????????????????????????????????");
+                    Log.d(this.getClass().getName(),"query in HOMEACTIVITY");
 
-                    adapter adapter = snapshot.getValue(adapter.class);
-                    adapters.add(adapter);
+                    post post = snapshot.getValue(post.class);
+                    posts.add(post);
                 }
                 boardRecyclerViewAdapter.notifyDataSetChanged();
 
@@ -79,15 +79,18 @@ public class HomeActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
-            ((CustomViewHolder)holder).id.setText(adapters.get(position).id);
-            ((CustomViewHolder)holder).title.setText(adapters.get(position).title);
+            ((CustomViewHolder)holder).id.setText(posts.get(position).id);
+            ((CustomViewHolder)holder).title.setText(posts.get(position).title);
 
            // Picasso.with(holder.itemView.getContext()).load(adapters.get(position).imageUrl).into(((CustomViewHolder)holder).imageView);
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Toast.makeText(getApplicationContext(),"is it working?", Toast.LENGTH_LONG).show();
+                    //Toast.makeText(getApplicationContext(),"is it working?", Toast.LENGTH_LONG).show();
+                    putPreferences(getApplicationContext(), "id", posts.get(position).id);
+                    putPreferences(getApplicationContext(), "title", posts.get(position).title);
 
+                    /***
                     putPreferences(getApplicationContext(), "id", adapters.get(position).id);
                     putPreferences(getApplicationContext(), "title", adapters.get(position).title);
                     putPreferences(getApplicationContext(), "mp3link", adapters.get(position).mp3_link);
@@ -104,6 +107,9 @@ public class HomeActivity extends AppCompatActivity {
                     putPreferences(getApplicationContext(), "txt1_B2_KOR", adapters.get(position).txt1_B2_KOR);
                     putPreferences(getApplicationContext(), "mp3_B2", adapters.get(position).mp3_B2);
                     Log.d(this.getClass().getName(),"다운되나?????????????????????????????????????");
+
+                    ***/
+
                     Intent intent = new Intent(HomeActivity.this, ReadActivity.class);
                     startActivity(intent);
                 }
@@ -111,7 +117,7 @@ public class HomeActivity extends AppCompatActivity {
         }
         @Override
         public int getItemCount() {
-            return adapters.size();
+            return posts.size();
         }
 
         private class CustomViewHolder extends RecyclerView.ViewHolder{
@@ -128,7 +134,7 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void putPreferences(Context context, String key, String value) {
-        SharedPreferences pref = context.getSharedPreferences("adapter", context.MODE_PRIVATE);
+        SharedPreferences pref = context.getSharedPreferences("post", context.MODE_PRIVATE);
         SharedPreferences.Editor editor = pref.edit();
         editor.putString(key, value);
         editor.apply();
