@@ -31,7 +31,8 @@ public class VoiceActivity extends AppCompatActivity {
 
         if ( Build.VERSION.SDK_INT >= 23 ){
             // 퍼미션 체크
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.INTERNET,Manifest.permission.RECORD_AUDIO},PERMISSION);
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.INTERNET,
+                    Manifest.permission.RECORD_AUDIO},PERMISSION);
         }
 
         textView = (TextView)findViewById(R.id.sttResult);

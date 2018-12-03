@@ -91,9 +91,18 @@ public class HomeActivity extends AppCompatActivity {
                     putPreferences(getApplicationContext(), "id", adapters.get(position).id);
                     putPreferences(getApplicationContext(), "title", adapters.get(position).title);
                     putPreferences(getApplicationContext(), "mp3link", adapters.get(position).mp3_link);
-                    putPreferences(getApplicationContext(), "engtxt", adapters.get(position).txt1_A1_ENG);
-                    putPreferences(getApplicationContext(), "kortxt", adapters.get(position).txt1_A1_KOR);
-
+                    putPreferences(getApplicationContext(), "txt1_A1_ENG", adapters.get(position).txt1_A1_ENG);
+                    putPreferences(getApplicationContext(), "txt1_A1_KOR", adapters.get(position).txt1_A1_KOR);
+                    putPreferences(getApplicationContext(), "mp3_A1", adapters.get(position).mp3_A1);
+                    putPreferences(getApplicationContext(), "txt1_B1_ENG", adapters.get(position).txt1_B1_ENG);
+                    putPreferences(getApplicationContext(), "txt1_B1_KOR", adapters.get(position).txt1_B1_KOR);
+                    putPreferences(getApplicationContext(), "mp3_B1", adapters.get(position).mp3_B1);
+                    putPreferences(getApplicationContext(), "txt1_A2_ENG", adapters.get(position).txt1_A2_ENG);
+                    putPreferences(getApplicationContext(), "txt1_A2_KOR", adapters.get(position).txt1_A2_KOR);
+                    putPreferences(getApplicationContext(), "mp3_A2", adapters.get(position).mp3_A2);
+                    putPreferences(getApplicationContext(), "txt1_B2_ENG", adapters.get(position).txt1_B2_ENG);
+                    putPreferences(getApplicationContext(), "txt1_B2_KOR", adapters.get(position).txt1_B2_KOR);
+                    putPreferences(getApplicationContext(), "mp3_B2", adapters.get(position).mp3_B2);
                     Log.d(this.getClass().getName(),"다운되나?????????????????????????????????????");
                     Intent intent = new Intent(HomeActivity.this, ReadActivity.class);
                     startActivity(intent);

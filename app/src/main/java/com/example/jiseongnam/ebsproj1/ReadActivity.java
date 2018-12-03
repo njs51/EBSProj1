@@ -24,6 +24,7 @@ public class ReadActivity extends AppCompatActivity {
     public String speaking_id;
     public String mp3link;
     readmodel readmodel;
+    MediaPlayer mediaPlayer;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -37,17 +38,15 @@ public class ReadActivity extends AppCompatActivity {
         tv_kortxt = (TextView)findViewById(R.id.txt_kor);
 
         speaking_id = pref.getString("id","");
-        mp3link = pref.getString("mp3link","");
+
+        //mp3link = pref.getString("mp3link","");
         tv_id.setText(pref.getString("id",""));
         tv_title.setText(pref.getString("title",""));
-        tv_engtxt.setText(pref.getString("engtxt",""));
-        tv_kortxt.setText(pref.getString("kortxt",""));
 
         Log.d(this.getClass().getName(),"오픈되나?????????????????????????????????????");
 
        //Query query = FirebaseDatabase.getInstance().getReference().child("speaking").orderByChild("id");
         System.out.println(speaking_id);
-
 
         /**
         FirebaseDatabase.getInstance().getReference().child("speaking").orderByChild("id").addValueEventListener(new ValueEventListener() {
@@ -70,12 +69,28 @@ public class ReadActivity extends AppCompatActivity {
             }
         });
         **/
-        MediaPlayer mediaPlayer = new MediaPlayer();
-        try
-        {
-            Log.d(this.getClass().getName(),"음악되나?????????????????????????????????????");
 
+        mediaPlayer = new MediaPlayer();
+
+        Log.d(this.getClass().getName(),"음악되나?????????????????????????????????????");
+
+        setText_mp3(pref.getString("mp3_A1",""),pref.getString("txt1_A1_ENG",""),pref.getString("txt1_A1_KOR",""));
+        setText_mp3(pref.getString("mp3_B1",""),pref.getString("txt1_B1_ENG",""),pref.getString("txt1_B1_KOR",""));
+        setText_mp3(pref.getString("mp3_A2",""),pref.getString("txt1_A2_ENG",""),pref.getString("txt1_A2_KOR",""));
+        setText_mp3(pref.getString("mp3_B2",""),pref.getString("txt1_B2_ENG",""),pref.getString("txt1_B2_KOR",""));
+
+        removeAllPreferences(getApplicationContext());
+    }
+
+    private void setText_mp3(String mp3link, String txteng, String txtkor){
+
+        while(mediaPlayer.isPlaying()) {
+                //waiting
+        }
+        try{
             mediaPlayer.setDataSource(mp3link);
+            tv_engtxt.setText(txteng);
+            tv_kortxt.setText(txtkor);
             mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                 @Override
                 public void onPrepared(MediaPlayer mp) {
@@ -87,7 +102,6 @@ public class ReadActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        removeAllPreferences(getApplicationContext());
     }
 
     private void removeAllPreferences(Context context) {
