@@ -12,9 +12,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
@@ -82,13 +83,15 @@ public class HomeActivity extends AppCompatActivity {
             ((CustomViewHolder)holder).id.setText(posts.get(position).id);
             ((CustomViewHolder)holder).title.setText(posts.get(position).title);
 
-           // Picasso.with(holder.itemView.getContext()).load(adapters.get(position).imageUrl).into(((CustomViewHolder)holder).imageView);
+            Glide.with(getApplicationContext()).load(posts.get(position).img).into(((CustomViewHolder) holder).imageView);
+
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     //Toast.makeText(getApplicationContext(),"is it working?", Toast.LENGTH_LONG).show();
                     putPreferences(getApplicationContext(), "id", posts.get(position).id);
                     putPreferences(getApplicationContext(), "title", posts.get(position).title);
+                    putPreferences(getApplicationContext(), "img", posts.get(position).img);
 
                     /***
                     putPreferences(getApplicationContext(), "id", adapters.get(position).id);
@@ -123,12 +126,13 @@ public class HomeActivity extends AppCompatActivity {
         private class CustomViewHolder extends RecyclerView.ViewHolder{
             TextView id;
             TextView title;
+            ImageView imageView;
 
             public CustomViewHolder(View view){
                 super(view);
                 id  = (TextView)view.findViewById(R.id.item_id);
                 title = (TextView)view.findViewById(R.id.item_title);
-
+                imageView = (ImageView)view.findViewById(R.id.imageView);
             }
         }
     }

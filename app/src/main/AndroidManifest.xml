@@ -23,6 +23,7 @@
         </activity>
         <activity android:name=".HomeActivity" />
         <activity android:name=".ReadActivity" />
+        <activity android:name=".StudyActivitiy" />
         <activity android:name=".VoiceActivity" />
 
     </application>

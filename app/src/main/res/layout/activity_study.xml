@@ -1,13 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center"
-    android:orientation="vertical"
-    tools:context=".VoiceActivity"
-    >
+    android:orientation="vertical">
+
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -109,7 +106,7 @@
         />
 
     <ImageView
-        android:id="@+id/btn_start"
+        android:id="@+id/imageView2"
         android:layout_width="match_parent"
         android:layout_height="100dp"
         app:srcCompat="@drawable/mic" />
@@ -138,4 +135,5 @@
             android:layout_marginHorizontal="5dp"
             android:text="한글 script 보기" />
     </LinearLayout>
+
 </LinearLayout>

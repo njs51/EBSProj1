@@ -1,17 +1,15 @@
 package com.example.jiseongnam.ebsproj1;
 
-
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -25,7 +23,7 @@ import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.List;
 
-public class VoiceActivity extends AppCompatActivity {
+public class StudyActivitiy extends AppCompatActivity {
     private FirebaseDatabase database;
 
     TextView tv_id;
@@ -41,38 +39,33 @@ public class VoiceActivity extends AppCompatActivity {
     MediaPlayer A1, B1, A2, B2;
     ImageView imageView;
 
-    private Button btnengscript;
-    private Button btnkorscript;
-    int engscrFlag = 0;
-    int korscrFlag = 0;
-
-    int scriptpage=0;
-
-
     int flag=1;
     private adapter newadapter = new adapter();
 
-
-    private static final String TAG = VoiceActivity.class.getSimpleName();
+    /////////////////////////naver////////////////////////
+    ////////////////////////////////////////////////////////
+    private static final String TAG = StudyActivitiy.class.getSimpleName();
     private static final String CLIENT_ID = "aflve7zc0w";
-    // 1. "내 애플리케이션"에서 Client ID를 확인해서 이곳에 적어주세요.
-    // 2. build.gradle (Module:app)에서 패키지명을 실제 개발자센터 애플리케이션 설정의 '안드로이드 앱 패키지 이름'으로 바꿔 주세요
 
     private RecognitionHandler handler;
     private NaverRecognizer naverRecognizer;
 
     private TextView txtResult;
-    private ImageView btnStart;
+    private Button btnStart;
+    private Button btnengscript;
+    private Button btnkorscript;
+    int engscrFlag = 0;
+    int engkorFlag = 0;
+
     private String mResult;
 
     private AudioWriterPCM writer;
 
-    // Handle speech recognition Messages.
     private void handleMessage(Message msg) {
         switch (msg.what) {
             case R.id.clientReady:
                 // Now an user can speak.
-                txtResult.setText(". . .");
+                txtResult.setText("Connected");
                 writer = new AudioWriterPCM(
                         Environment.getExternalStorageDirectory().getAbsolutePath() + "/NaverSpeechTest");
                 writer.open("Test");
@@ -109,7 +102,7 @@ public class VoiceActivity extends AppCompatActivity {
 
                 mResult = "Error code : " + msg.obj.toString();
                 txtResult.setText(mResult);
-                //btnStart.setText(R.string.str_start);
+                btnStart.setText(R.string.str_start);
                 btnStart.setEnabled(true);
                 break;
 
@@ -118,29 +111,76 @@ public class VoiceActivity extends AppCompatActivity {
                     writer.close();
                 }
 
-                //btnStart.setText(R.string.str_start);
+                btnStart.setText(R.string.str_start);
                 btnStart.setEnabled(true);
                 break;
         }
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onStart() {
+        super.onStart();
+        // NOTE : initialize() must be called on start time.
+        naverRecognizer.getSpeechRecognizer().initialize();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        mResult = "";
+        txtResult.setText("");
+        btnStart.setText(R.string.str_start);
+        btnStart.setEnabled(true);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        // NOTE : release() must be called on stop time.
+        naverRecognizer.getSpeechRecognizer().release();
+    }
+
+    // Declare handler for handling SpeechRecognizer thread's Messages.
+    static class RecognitionHandler extends Handler {
+        private final WeakReference<StudyActivitiy> mActivity;
+
+        RecognitionHandler(StudyActivitiy activity) {
+            mActivity = new WeakReference<StudyActivitiy>(activity);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            StudyActivitiy activity = mActivity.get();
+            if (activity != null) {
+                activity.handleMessage(msg);
+            }
+        }
+    }
+
+    //////////////////////////////////////////////////////////
+    ////////////////////naver_end//////////////////////////
+    ////////////////////////////////////////////////////////
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        SharedPreferences pref = getApplicationContext().getSharedPreferences("adapter", getApplicationContext().MODE_PRIVATE);
 
-        setContentView(R.layout.activity_voice);
-
+        /////////////////////////////////////
         txtResult = (TextView) findViewById(R.id.txt_result);
-        btnStart =(ImageView) findViewById(R.id.btn_start);
-
+        btnStart =(Button) findViewById(R.id.btn_start);
         btnengscript = (Button)findViewById(R.id.btn_engScr);
         btnkorscript = (Button)findViewById(R.id.btn_korScr);
 
-
-        handler = new RecognitionHandler(this);
+        handler = new StudyActivitiy.RecognitionHandler(this);
         naverRecognizer = new NaverRecognizer(this, handler, CLIENT_ID);
+        /////////////////////////////////////////////////////
+
+
+        SharedPreferences pref = getApplicationContext().getSharedPreferences("adapter", getApplicationContext().MODE_PRIVATE);
+
+        setContentView(R.layout.activity_study);
 
         tv_id = (TextView)findViewById(R.id.item_id);
         tv_title = (TextView)findViewById(R.id.item_title);
@@ -155,10 +195,6 @@ public class VoiceActivity extends AppCompatActivity {
         tv_id.setText(pref.getString("id",""));
         tv_title.setText(pref.getString("title",""));
         Glide.with(imageView).load(pref.getString("img","")).into(imageView);
-
-        /////////////////////////////////////////////
-        /////////////preference 받아옴 /////////////////
-        //////////////////////////////////////////
 
         newadapter.id = pref.getString("id","");
         newadapter.title = pref.getString("title","");
@@ -178,109 +214,31 @@ public class VoiceActivity extends AppCompatActivity {
 
         setText_mp3(newadapter);
 
-        btnengscript.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(engscrFlag==0){
-                    engscrFlag = 1;
-                    btnengscript.setTextColor(Color.parseColor("#138921"));
-                    if(scriptpage==0){
-                        tv_engtxt2.setText(newadapter.txt1_B1_ENG);
-                    }
-                    else if(scriptpage==1){
-                        tv_engtxt2.setText(newadapter.txt1_B2_ENG);
-                    }
-                }
-                else{
-                    engscrFlag = 0;
-                    btnengscript.setTextColor(Color.parseColor("#000000"));
-                    tv_engtxt2.setText("_________________________");
-                }
-            }
-        });
-        btnkorscript.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(korscrFlag==0){
-                    korscrFlag = 1;
-                    btnkorscript.setTextColor(Color.parseColor("#138921"));
-                    if(scriptpage==0){
-                        tv_kortxt2.setText(newadapter.txt1_B1_KOR);
-                    }
-                    else if(scriptpage==1){
-                        tv_kortxt2.setText(newadapter.txt1_B2_KOR);
-                    }
-                }
-                else{
-                    korscrFlag = 0;
-                    btnkorscript.setTextColor(Color.parseColor("#000000"));
-                    tv_kortxt2.setText("_________________________");
-                }
-            }
-        });
+        /***
+         setText_mp3(pref.getString("mp3_A1",""),pref.getString("txt1_A1_ENG",""),pref.getString("txt1_A1_KOR",""));
+         setText_mp3(pref.getString("mp3_B1",""),pref.getString("txt1_B1_ENG",""),pref.getString("txt1_B1_KOR",""));
+         setText_mp3(pref.getString("mp3_A2",""),pref.getString("txt1_A2_ENG",""),pref.getString("txt1_A2_KOR",""));
+         setText_mp3(pref.getString("mp3_B2",""),pref.getString("txt1_B2_ENG",""),pref.getString("txt1_B2_KOR",""));
 
-        btnStart.setOnClickListener(new View.OnClickListener() {
+         ***/
 
-            @Override
-            public void onClick(View v) {
-                if(!naverRecognizer.getSpeechRecognizer().isRunning()) {
-                    // Start button is pushed when SpeechRecognizer's state is inactive.
-                    // Run SpeechRecongizer by calling recognize().
-                    mResult = "";
-                    txtResult.setText(". . .");
-                    //btnStart.setText(R.string.str_stop);
-                    naverRecognizer.recognize();
-                } else {
-                    Log.d(TAG, "stop and wait Final Result");
-                    btnStart.setEnabled(false);
-
-                    naverRecognizer.getSpeechRecognizer().stop();
-                }
-            }
-        });
+        //removeAllPreferences(getApplicationContext());
+        removeAllPreferences_adapter(getApplicationContext());
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        // NOTE : initialize() must be called on start time.
-        naverRecognizer.getSpeechRecognizer().initialize();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        mResult = "";
-        txtResult.setText("");
-        //btnStart.setText(R.string.str_start);
-        btnStart.setEnabled(true);
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        // NOTE : release() must be called on stop time.
-        naverRecognizer.getSpeechRecognizer().release();
-    }
-
-    // Declare handler for handling SpeechRecognizer thread's Messages.
-    static class RecognitionHandler extends Handler {
-        private final WeakReference<VoiceActivity> mActivity;
-
-        RecognitionHandler(VoiceActivity activity) {
-            mActivity = new WeakReference<VoiceActivity>(activity);
-        }
-
-        @Override
-        public void handleMessage(Message msg) {
-            VoiceActivity activity = mActivity.get();
-            if (activity != null) {
-                activity.handleMessage(msg);
-            }
+    private void listen(){
+        if(!naverRecognizer.getSpeechRecognizer().isRunning()) {
+            // Start button is pushed when SpeechRecognizer's state is inactive.
+            // Run SpeechRecongizer by calling recognize().
+            mResult = "";
+            txtResult.setText("Connecting...");
+            btnStart.setText(R.string.str_stop);
+            naverRecognizer.recognize();
+        } else {
+            Log.d(TAG, "stop and wait Final Result");
+            naverRecognizer.getSpeechRecognizer().stop();
         }
     }
-
 
     private void setText_mp3(final adapter adapter){
 
@@ -297,14 +255,11 @@ public class VoiceActivity extends AppCompatActivity {
             tv_engtxt.setText(adapter.txt1_A1_ENG);
             tv_kortxt.setText(adapter.txt1_A1_KOR);
 
-            tv_engtxt.setTextColor(Color.parseColor("#138921"));
-            tv_kortxt.setTextColor(Color.parseColor("#138921"));
-
             A1.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                 @Override
                 public void onPrepared(MediaPlayer mp) {
                     mp.start();
-                    //while (mp.isPlaying()) { }
+                    while (mp.isPlaying()) { }
                 }
             });
             A1.prepareAsync();
@@ -312,35 +267,12 @@ public class VoiceActivity extends AppCompatActivity {
             A1.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                 @Override
                 public void onCompletion(MediaPlayer mediaPlayer) {
-                    scriptpage=1;
-                    if(engscrFlag==1){
-                        tv_engtxt2.setText(newadapter.txt1_B2_ENG);
-                    }
-                    if(korscrFlag==1){
-                        tv_kortxt2.setText(newadapter.txt1_B2_KOR);
-                    }
-
-                    tv_engtxt.setText(adapter.txt1_A2_ENG);
-                    tv_kortxt.setText(adapter.txt1_A2_KOR);
-
-                    tv_engtxt.setTextColor(Color.parseColor("#000000"));
-                    tv_kortxt.setTextColor(Color.parseColor("#000000"));
-                    tv_engtxt2.setTextColor(Color.parseColor("#138921"));
-                    tv_kortxt2.setTextColor(Color.parseColor("#138921"));
-
-                    txtResult.setText("아래의 버튼을 누르고 말해보세요");
-
                     ////////////////////////////////////////////////////
                     ///////////////////여기에 B1 speaking///////////////////
                     ////////////////////////////////////////////////////
 
-
-
-                    //////////////////////////////////////////////////////////
-                    ///////////////////B1speaking 끝나면 A2 초록색/////////////
-                    //////////////////////////////////////////////////////////
-
-
+                    tv_engtxt.setText(adapter.txt1_A2_ENG);
+                    tv_kortxt.setText(adapter.txt1_A2_KOR);
                     A1.release();
 
                     try {
@@ -350,7 +282,7 @@ public class VoiceActivity extends AppCompatActivity {
                             @Override
                             public void onPrepared(MediaPlayer mp) {
                                 mp.start();
-                                //while (mp.isPlaying()) { }
+                                while (mp.isPlaying()) { }
                             }
                         });
 
@@ -359,11 +291,6 @@ public class VoiceActivity extends AppCompatActivity {
                         A2.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                             @Override
                             public void onCompletion(MediaPlayer mediaPlayer) {
-                                tv_engtxt.setTextColor(Color.parseColor("#000000"));
-                                tv_kortxt.setTextColor(Color.parseColor("#000000"));
-                                tv_engtxt2.setTextColor(Color.parseColor("#138921"));
-                                tv_kortxt2.setTextColor(Color.parseColor("#138921"));
-
                                 ////////////////////////////////////////////////////
                                 ///////////////////여기에 B2 speaking///////////////////
                                 ////////////////////////////////////////////////////

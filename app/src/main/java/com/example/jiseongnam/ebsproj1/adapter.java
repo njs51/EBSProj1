@@ -4,7 +4,7 @@ public class adapter {
 
     public String id;
     public String title;
-
+    public String img;
     public String mp3_link;
     public String txt1_A1_ENG;
     public String txt1_A1_KOR;

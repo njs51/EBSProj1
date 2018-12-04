@@ -1,15 +1,21 @@
 package com.example.jiseongnam.ebsproj1;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
@@ -25,6 +31,10 @@ public class ReadActivity extends AppCompatActivity {
     TextView tv_title;
     TextView tv_engtxt;
     TextView tv_kortxt;
+    TextView tv_engtxt2;
+    TextView tv_kortxt2;
+    ImageView imageView;
+
     public String speaking_id;
     public String mp3link;
     readmodel readmodel;
@@ -32,6 +42,7 @@ public class ReadActivity extends AppCompatActivity {
     MediaPlayer A1, B1, A2, B2;
     int flag=1;
     private adapter newadapter = new adapter();
+    Button study_btn;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -43,37 +54,35 @@ public class ReadActivity extends AppCompatActivity {
         tv_title = (TextView)findViewById(R.id.item_title);
         tv_engtxt = (TextView)findViewById(R.id.txt_eng);
         tv_kortxt = (TextView)findViewById(R.id.txt_kor);
+        tv_engtxt2 = (TextView)findViewById(R.id.txt_eng2);
+        tv_kortxt2 = (TextView)findViewById(R.id.txt_kor2);
+        imageView = (ImageView)findViewById(R.id.imageView);
+
+        study_btn = (Button)findViewById(R.id.btn_study);
+
+        //////////btn to studyActivity
+
+
 
         speaking_id = pref.getString("id","");
+
+        ////////////////////////////////////////////
+        //////////////page setting/////////////////////
+        ////////////////////////////////////////////////
 
         //mp3link = pref.getString("mp3link","");
         tv_id.setText(pref.getString("id",""));
         tv_title.setText(pref.getString("title",""));
+        Glide.with(imageView).load(pref.getString("img","")).into(imageView);
 
         Log.d(this.getClass().getName(),"open?????????????????????????????????????");
 
         //Query query = FirebaseDatabase.getInstance().getReference().child("speaking").orderByChild("id");
         System.out.println(speaking_id);
 
+
+
         /////////////////////////////////////
-        /**
-         FirebaseDatabase.getInstance().getReference().child("speaking").orderByChild("id").addValueEventListener(new ValueEventListener() {
-        @Override
-        public void onDataChange(DataSnapshot dataSnapshot) {
-
-        for(DataSnapshot snapshot :dataSnapshot.getChildren()) {
-
-        Log.d(this.getClass().getName(), "쿼리되나?????????????????????????????????????");
-        readmodel = snapshot.getValue(readmodel.class);
-        }
-        }
-        @Override
-        public void onCancelled(DatabaseError databaseError) {
-
-        }
-        });
-         **/
-
         Log.d(this.getClass().getName(),"mediaplayer?????????????????????????????????????");
 
         FirebaseDatabase.getInstance().getReference().child("speaking").orderByChild("id").equalTo(speaking_id).addValueEventListener(new ValueEventListener() {
@@ -92,13 +101,36 @@ public class ReadActivity extends AppCompatActivity {
             }
         });
 
-        /***
-         setText_mp3(pref.getString("mp3_A1",""),pref.getString("txt1_A1_ENG",""),pref.getString("txt1_A1_KOR",""));
-         setText_mp3(pref.getString("mp3_B1",""),pref.getString("txt1_B1_ENG",""),pref.getString("txt1_B1_KOR",""));
-         setText_mp3(pref.getString("mp3_A2",""),pref.getString("txt1_A2_ENG",""),pref.getString("txt1_A2_KOR",""));
-         setText_mp3(pref.getString("mp3_B2",""),pref.getString("txt1_B2_ENG",""),pref.getString("txt1_B2_KOR",""));
+        study_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
 
-         ***/
+                //Toast.makeText(getApplicationContext(),"학습해봅시다",Toast.LENGTH_LONG).show();
+
+                ///////////////////////////////////////////////////////////////
+                //////////////////////////////pref 넘겨야됨/////////////////////////
+                //////////////////////////////////////////////////////////////////
+                putPreferences(getApplicationContext(), "id", newadapter.id);
+                putPreferences(getApplicationContext(), "title", newadapter.title);
+                putPreferences(getApplicationContext(), "img", newadapter.img);
+                putPreferences(getApplicationContext(), "txt1_A1_ENG", newadapter.txt1_A1_ENG);
+                putPreferences(getApplicationContext(), "txt1_A1_KOR", newadapter.txt1_A1_KOR);
+                putPreferences(getApplicationContext(), "mp3_A1", newadapter.mp3_A1);
+                putPreferences(getApplicationContext(), "txt1_B1_ENG", newadapter.txt1_B1_ENG);
+                putPreferences(getApplicationContext(), "txt1_B1_KOR", newadapter.txt1_B1_KOR);
+                putPreferences(getApplicationContext(), "mp3_B1", newadapter.mp3_B1);
+                putPreferences(getApplicationContext(), "txt1_A2_ENG", newadapter.txt1_A2_ENG);
+                putPreferences(getApplicationContext(), "txt1_A2_KOR", newadapter.txt1_A2_KOR);
+                putPreferences(getApplicationContext(), "mp3_A2", newadapter.mp3_A2);
+                putPreferences(getApplicationContext(), "txt1_B2_ENG", newadapter.txt1_B2_ENG);
+                putPreferences(getApplicationContext(), "txt1_B2_KOR", newadapter.txt1_B2_KOR);
+                putPreferences(getApplicationContext(), "mp3_B2", newadapter.mp3_B2);
+
+
+                Intent intent = new Intent(ReadActivity.this, VoiceActivity.class);
+                startActivity(intent);
+            }
+        });
 
         removeAllPreferences(getApplicationContext());
     }
@@ -112,45 +144,26 @@ public class ReadActivity extends AppCompatActivity {
 
         //MediaPlayer mp = new MediaPlayer();
 
-        /**
-         //mp.setLooping(false);
-         mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-        @Override
-        public void onCompletion(MediaPlayer mediaPlayer) {
-        mediaPlayer.reset();
-        try{
-        mediaPlayer.setDataSource(adapter.mp3_A1);
-        }catch (IOException e){
-        e.printStackTrace();
-        }
-        try{
-        mediaPlayer.prepareAsync();
-        }catch (IllegalStateException e){
-        e.printStackTrace();
-        }
-        mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-        @Override
-        public void onPrepared(MediaPlayer mediaPlayer) {
-        mediaPlayer.start();
-        }
-        });
-
-        }
-        });
-         **/
-
-
         //A1.setLooping(false);
         try {
             A1.setDataSource(adapter.mp3_A1);
             tv_engtxt.setText(adapter.txt1_A1_ENG);
             tv_kortxt.setText(adapter.txt1_A1_KOR);
+            tv_engtxt2.setText(adapter.txt1_B1_ENG);
+            tv_kortxt2.setText(adapter.txt1_B1_KOR);
+            //////////////////////////A1색깔변경///////////////////
+            /////////////////////////////////////////////////////
+
+            //tv_engtxt.setTextColor(Color.parseColor("#000000"));
+            //tv_kortxt.setTextColor(Color.parseColor("#000000"));
+            tv_engtxt.setTextColor(Color.parseColor("#138921"));
+            tv_kortxt.setTextColor(Color.parseColor("#138921"));
 
             A1.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                 @Override
                 public void onPrepared(MediaPlayer mp) {
                     mp.start();
-                    while (mp.isPlaying()) { }
+                    //while (mp.isPlaying()) { }
                 }
             });
             A1.prepareAsync();
@@ -158,8 +171,13 @@ public class ReadActivity extends AppCompatActivity {
             A1.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                 @Override
                 public void onCompletion(MediaPlayer mediaPlayer) {
-                    tv_engtxt.setText(adapter.txt1_B1_ENG);
-                    tv_kortxt.setText(adapter.txt1_B1_KOR);
+                    ///////////////////////////
+                    ///////B1 색깔변경///////////////
+                    ////////////////////////////
+                    tv_engtxt.setTextColor(Color.parseColor("#000000"));
+                    tv_kortxt.setTextColor(Color.parseColor("#000000"));
+                    tv_engtxt2.setTextColor(Color.parseColor("#138921"));
+                    tv_kortxt2.setTextColor(Color.parseColor("#138921"));
                     A1.release();
 
                     try {
@@ -169,7 +187,7 @@ public class ReadActivity extends AppCompatActivity {
                             @Override
                             public void onPrepared(MediaPlayer mp) {
                                 mp.start();
-                                while (mp.isPlaying()) { }
+                                //while (mp.isPlaying()) { }
                             }
                         });
 
@@ -178,8 +196,18 @@ public class ReadActivity extends AppCompatActivity {
                         B1.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                             @Override
                             public void onCompletion(MediaPlayer mediaPlayer) {
+                                //////////////////////////////
+                                //////////A2 색깔//////////////
+                                //////////////////////////////
                                 tv_engtxt.setText(adapter.txt1_A2_ENG);
                                 tv_kortxt.setText(adapter.txt1_A2_KOR);
+                                tv_engtxt2.setText(adapter.txt1_B2_ENG);
+                                tv_kortxt2.setText(adapter.txt1_B2_KOR);
+                                tv_engtxt.setTextColor(Color.parseColor("#138921"));
+                                tv_kortxt.setTextColor(Color.parseColor("#138921"));
+                                tv_engtxt2.setTextColor(Color.parseColor("#000000"));
+                                tv_kortxt2.setTextColor(Color.parseColor("#000000"));
+
                                 B1.release();
 
                                 try {
@@ -189,7 +217,7 @@ public class ReadActivity extends AppCompatActivity {
                                         @Override
                                         public void onPrepared(MediaPlayer mp) {
                                             mp.start();
-                                            while (mp.isPlaying()) { }
+                                            //while (mp.isPlaying()) { }
                                         }
                                     });
 
@@ -198,8 +226,15 @@ public class ReadActivity extends AppCompatActivity {
                                     A2.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                                         @Override
                                         public void onCompletion(MediaPlayer mediaPlayer) {
-                                            tv_engtxt.setText(adapter.txt1_B2_ENG);
-                                            tv_kortxt.setText(adapter.txt1_B2_KOR);
+                                            ////////////////////////////////////////////
+                                            ////////////B2 색깔//////////////////////
+                                            ////////////////////////////////
+
+                                            tv_engtxt.setTextColor(Color.parseColor("#000000"));
+                                            tv_kortxt.setTextColor(Color.parseColor("#000000"));
+                                            tv_engtxt2.setTextColor(Color.parseColor("#138921"));
+                                            tv_kortxt2.setTextColor(Color.parseColor("#138921"));
+
                                             A2.release();
 
                                             try {
@@ -209,7 +244,7 @@ public class ReadActivity extends AppCompatActivity {
                                                     @Override
                                                     public void onPrepared(MediaPlayer mp) {
                                                         mp.start();
-                                                        while (mp.isPlaying()) { }
+                                                        //while (mp.isPlaying()) { }
                                                     }
                                                 });
 
@@ -232,40 +267,6 @@ public class ReadActivity extends AppCompatActivity {
             });
         } catch (IOException e) { e.printStackTrace(); }
 
-        /***
-         //B1.setLooping(false);
-         try{
-         B1.setDataSource(adapter.mp3_B1);
-
-         B1.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-        @Override
-        public void onPrepared(MediaPlayer mp) {
-        while(flag!=2) {
-
-        }
-        mp.start();
-        while(mp.isPlaying()){
-
-        }
-        //flag=3;
-        }
-        //Toast.makeText(getApplicationContext(),"mp3 stop..", Toast.LENGTH_LONG).show();
-        });
-         B1.prepareAsync();
-
-         B1.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-        @Override
-        public void onCompletion(MediaPlayer mediaPlayer) {
-        tv_engtxt.setText(adapter.txt1_A2_ENG);
-        tv_kortxt.setText(adapter.txt1_A2_KOR);
-        }
-        });
-
-         }catch (IOException e){
-         e.printStackTrace();
-         }
-
-         ***/
     }
 
 
@@ -273,6 +274,13 @@ public class ReadActivity extends AppCompatActivity {
         SharedPreferences pref = context.getSharedPreferences("post", context.MODE_PRIVATE);
         SharedPreferences.Editor editor = pref.edit();
         editor.clear();
+        editor.apply();
+    }
+
+    private void putPreferences(Context context, String key, String value) {
+        SharedPreferences pref = context.getSharedPreferences("adapter", context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putString(key, value);
         editor.apply();
     }
 
