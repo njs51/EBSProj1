@@ -40,12 +40,13 @@ public class VoiceActivity extends AppCompatActivity {
     MediaPlayer mediaPlayer;
     MediaPlayer A1, B1, A2, B2;
     ImageView imageView;
+    private Button btncontinue;
 
     private Button btnengscript;
     private Button btnkorscript;
     int engscrFlag = 0;
     int korscrFlag = 0;
-
+    int voiceFlag=0;
     int scriptpage=0;
 
 
@@ -95,6 +96,10 @@ public class VoiceActivity extends AppCompatActivity {
                 List<String> results = speechRecognitionResult.getResults();
                 StringBuilder strBuf = new StringBuilder();
                 for(String result : results) {
+                    /////////////////////////////////////////////////////////////
+                    //////////////////////////speech 결과부분 ////////////////////
+                    /////////////////////////////////////////////////////////////
+
                     strBuf.append(result);
                     strBuf.append("\n");
                 }
@@ -138,6 +143,7 @@ public class VoiceActivity extends AppCompatActivity {
         btnengscript = (Button)findViewById(R.id.btn_engScr);
         btnkorscript = (Button)findViewById(R.id.btn_korScr);
 
+        btncontinue = (Button)findViewById(R.id.btn_continue);
 
         handler = new RecognitionHandler(this);
         naverRecognizer = new NaverRecognizer(this, handler, CLIENT_ID);
@@ -238,12 +244,16 @@ public class VoiceActivity extends AppCompatActivity {
                 }
             }
         });
+
     }
 
     @Override
     protected void onStart() {
         super.onStart();
         // NOTE : initialize() must be called on start time.
+        //A1.pause();
+        //A2.pause();
+
         naverRecognizer.getSpeechRecognizer().initialize();
     }
 
@@ -260,6 +270,7 @@ public class VoiceActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
+
         // NOTE : release() must be called on stop time.
         naverRecognizer.getSpeechRecognizer().release();
     }
@@ -312,16 +323,6 @@ public class VoiceActivity extends AppCompatActivity {
             A1.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                 @Override
                 public void onCompletion(MediaPlayer mediaPlayer) {
-                    scriptpage=1;
-                    if(engscrFlag==1){
-                        tv_engtxt2.setText(newadapter.txt1_B2_ENG);
-                    }
-                    if(korscrFlag==1){
-                        tv_kortxt2.setText(newadapter.txt1_B2_KOR);
-                    }
-
-                    tv_engtxt.setText(adapter.txt1_A2_ENG);
-                    tv_kortxt.setText(adapter.txt1_A2_KOR);
 
                     tv_engtxt.setTextColor(Color.parseColor("#000000"));
                     tv_kortxt.setTextColor(Color.parseColor("#000000"));
@@ -335,49 +336,74 @@ public class VoiceActivity extends AppCompatActivity {
                     ////////////////////////////////////////////////////
 
 
-
                     //////////////////////////////////////////////////////////
                     ///////////////////B1speaking 끝나면 A2 초록색/////////////
                     //////////////////////////////////////////////////////////
 
-
                     A1.release();
-
-                    try {
-                        A2.setDataSource(adapter.mp3_A2);
-
-                        A2.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                            @Override
-                            public void onPrepared(MediaPlayer mp) {
-                                mp.start();
-                                //while (mp.isPlaying()) { }
-                            }
-                        });
-
-                        A2.prepareAsync();
-
-                        A2.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                            @Override
-                            public void onCompletion(MediaPlayer mediaPlayer) {
-                                tv_engtxt.setTextColor(Color.parseColor("#000000"));
-                                tv_kortxt.setTextColor(Color.parseColor("#000000"));
-                                tv_engtxt2.setTextColor(Color.parseColor("#138921"));
-                                tv_kortxt2.setTextColor(Color.parseColor("#138921"));
-
-                                ////////////////////////////////////////////////////
-                                ///////////////////여기에 B2 speaking///////////////////
-                                ////////////////////////////////////////////////////
-
-                            }
-                        });
-                    } catch (IOException e2) { e2.printStackTrace(); }
 
                 }
             });
         } catch (IOException e) { e.printStackTrace(); }
 
+        btncontinue.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                scriptpage=1;
+                if(engscrFlag==1){
+                    tv_engtxt2.setText(newadapter.txt1_B2_ENG);
+                }
+                if(korscrFlag==1){
+                    tv_kortxt2.setText(newadapter.txt1_B2_KOR);
+                }
+
+                tv_engtxt.setText(adapter.txt1_A2_ENG);
+                tv_kortxt.setText(adapter.txt1_A2_KOR);
+                tv_engtxt.setTextColor(Color.parseColor("#138921"));
+                tv_kortxt.setTextColor(Color.parseColor("#138921"));
+                tv_engtxt2.setTextColor(Color.parseColor("#000000"));
+                tv_kortxt2.setTextColor(Color.parseColor("#000000"));
+
+                try {
+                    A2.setDataSource(adapter.mp3_A2);
+
+                    A2.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                        @Override
+                        public void onPrepared(MediaPlayer mp) {
+                            mp.start();
+                            //while (mp.isPlaying()) { }
+                        }
+                    });
+
+                    A2.prepareAsync();
+
+                    A2.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                        @Override
+                        public void onCompletion(MediaPlayer mediaPlayer) {
+                            tv_engtxt.setTextColor(Color.parseColor("#000000"));
+                            tv_kortxt.setTextColor(Color.parseColor("#000000"));
+                            tv_engtxt2.setTextColor(Color.parseColor("#138921"));
+                            tv_kortxt2.setTextColor(Color.parseColor("#138921"));
+
+                            ////////////////////////////////////////////////////
+                            ///////////////////여기에 B2 speaking///////////////////
+                            ////////////////////////////////////////////////////
+
+                            txtResult.setText("아래의 버튼을 누르고 말해보세요");
+
+                        }
+                    });
+                } catch (IOException e2) { e2.printStackTrace(); }
+            }
+        });
+
     }
 
+    public void onBackPressed() {
+        stopmp();
+        super.onBackPressed();
+    }
 
     private void removeAllPreferences(Context context) {
         SharedPreferences pref = context.getSharedPreferences("post", context.MODE_PRIVATE);
@@ -385,10 +411,28 @@ public class VoiceActivity extends AppCompatActivity {
         editor.clear();
         editor.apply();
     }
+
     private void removeAllPreferences_adapter(Context context) {
         SharedPreferences pref = context.getSharedPreferences("adapter", context.MODE_PRIVATE);
         SharedPreferences.Editor editor = pref.edit();
         editor.clear();
         editor.apply();
+    }
+    @Override
+    protected void onDestroy() {
+        getApplicationContext().getSharedPreferences("adapter", 0).edit().clear().commit();
+        getApplicationContext().getSharedPreferences("post", 0).edit().clear().commit();
+        if(A1!=null){ A1.release(); }
+        if(B1!=null){ B1.release(); }
+        if(A2!=null){ A2.release(); }
+        if(B2!=null){ B2.release(); }
+        super.onDestroy();
+    }
+
+    private void stopmp(){
+        try{ A1.stop(); A1.release();}catch (Exception e){ e.printStackTrace(); }
+        try{ A2.stop(); A2.release();}catch (Exception e){ e.printStackTrace(); }
+        try{ B1.stop(); B1.release();}catch (Exception e){ e.printStackTrace(); }
+        try{ B2.stop(); B2.release();}catch (Exception e){ e.printStackTrace(); }
     }
 }
