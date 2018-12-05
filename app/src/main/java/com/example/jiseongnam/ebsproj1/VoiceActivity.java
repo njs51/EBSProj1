@@ -49,6 +49,7 @@ public class VoiceActivity extends AppCompatActivity {
     int voiceFlag=0;
     int scriptpage=0;
 
+    private int onebutton=0;
 
     int flag=1;
     private adapter newadapter = new adapter();
@@ -349,52 +350,56 @@ public class VoiceActivity extends AppCompatActivity {
         btncontinue.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (onebutton == 0) {
+                    onebutton = 1;
+                    scriptpage = 1;
+                    if (engscrFlag == 1) {
+                        tv_engtxt2.setText(newadapter.txt1_B2_ENG);
+                    }
+                    if (korscrFlag == 1) {
+                        tv_kortxt2.setText(newadapter.txt1_B2_KOR);
+                    }
 
-                scriptpage=1;
-                if(engscrFlag==1){
-                    tv_engtxt2.setText(newadapter.txt1_B2_ENG);
+                    tv_engtxt.setText(adapter.txt1_A2_ENG);
+                    tv_kortxt.setText(adapter.txt1_A2_KOR);
+                    tv_engtxt.setTextColor(Color.parseColor("#138921"));
+                    tv_kortxt.setTextColor(Color.parseColor("#138921"));
+                    tv_engtxt2.setTextColor(Color.parseColor("#000000"));
+                    tv_kortxt2.setTextColor(Color.parseColor("#000000"));
+
+                    try {
+                        A2.setDataSource(adapter.mp3_A2);
+
+                        A2.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                            @Override
+                            public void onPrepared(MediaPlayer mp) {
+                                mp.start();
+                                //while (mp.isPlaying()) { }
+                            }
+                        });
+
+                        A2.prepareAsync();
+
+                        A2.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                            @Override
+                            public void onCompletion(MediaPlayer mediaPlayer) {
+                                tv_engtxt.setTextColor(Color.parseColor("#000000"));
+                                tv_kortxt.setTextColor(Color.parseColor("#000000"));
+                                tv_engtxt2.setTextColor(Color.parseColor("#138921"));
+                                tv_kortxt2.setTextColor(Color.parseColor("#138921"));
+
+                                ////////////////////////////////////////////////////
+                                ///////////////////여기에 B2 speaking///////////////////
+                                ////////////////////////////////////////////////////
+
+                                txtResult.setText("아래의 버튼을 누르고 말해보세요");
+
+                            }
+                        });
+                    } catch (IOException e2) {
+                        e2.printStackTrace();
+                    }
                 }
-                if(korscrFlag==1){
-                    tv_kortxt2.setText(newadapter.txt1_B2_KOR);
-                }
-
-                tv_engtxt.setText(adapter.txt1_A2_ENG);
-                tv_kortxt.setText(adapter.txt1_A2_KOR);
-                tv_engtxt.setTextColor(Color.parseColor("#138921"));
-                tv_kortxt.setTextColor(Color.parseColor("#138921"));
-                tv_engtxt2.setTextColor(Color.parseColor("#000000"));
-                tv_kortxt2.setTextColor(Color.parseColor("#000000"));
-
-                try {
-                    A2.setDataSource(adapter.mp3_A2);
-
-                    A2.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                        @Override
-                        public void onPrepared(MediaPlayer mp) {
-                            mp.start();
-                            //while (mp.isPlaying()) { }
-                        }
-                    });
-
-                    A2.prepareAsync();
-
-                    A2.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                        @Override
-                        public void onCompletion(MediaPlayer mediaPlayer) {
-                            tv_engtxt.setTextColor(Color.parseColor("#000000"));
-                            tv_kortxt.setTextColor(Color.parseColor("#000000"));
-                            tv_engtxt2.setTextColor(Color.parseColor("#138921"));
-                            tv_kortxt2.setTextColor(Color.parseColor("#138921"));
-
-                            ////////////////////////////////////////////////////
-                            ///////////////////여기에 B2 speaking///////////////////
-                            ////////////////////////////////////////////////////
-
-                            txtResult.setText("아래의 버튼을 누르고 말해보세요");
-
-                        }
-                    });
-                } catch (IOException e2) { e2.printStackTrace(); }
             }
         });
 
@@ -430,6 +435,7 @@ public class VoiceActivity extends AppCompatActivity {
     }
 
     private void stopmp(){
+        onebutton=0;
         try{ A1.stop(); A1.release();}catch (Exception e){ e.printStackTrace(); }
         try{ A2.stop(); A2.release();}catch (Exception e){ e.printStackTrace(); }
         try{ B1.stop(); B1.release();}catch (Exception e){ e.printStackTrace(); }
