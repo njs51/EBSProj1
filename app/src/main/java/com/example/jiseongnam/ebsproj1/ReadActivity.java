@@ -107,6 +107,8 @@ public class ReadActivity extends AppCompatActivity {
 
                 //Toast.makeText(getApplicationContext(),"학습해봅시다",Toast.LENGTH_LONG).show();
 
+                stopmp();
+
                 ///////////////////////////////////////////////////////////////
                 //////////////////////////////pref 넘겨야됨/////////////////////////
                 //////////////////////////////////////////////////////////////////
@@ -284,4 +286,27 @@ public class ReadActivity extends AppCompatActivity {
         editor.apply();
     }
 
+    @Override
+    public void onBackPressed() {
+        stopmp();
+        super.onBackPressed();
+    }
+
+    @Override
+    protected void onDestroy() {
+        getApplicationContext().getSharedPreferences("adapter", 0).edit().clear().commit();
+        getApplicationContext().getSharedPreferences("post", 0).edit().clear().commit();
+        if(A1!=null){ A1.release(); }
+        if(B1!=null){ B1.release(); }
+        if(A2!=null){ A2.release(); }
+        if(B2!=null){ B2.release(); }
+        super.onDestroy();
+    }
+
+    private void stopmp(){
+        try{ A1.stop(); A1.release();}catch (Exception e){ e.printStackTrace(); }
+        try{ A2.stop(); A2.release();}catch (Exception e){ e.printStackTrace(); }
+        try{ B1.stop(); B1.release();}catch (Exception e){ e.printStackTrace(); }
+        try{ B2.stop(); B2.release();}catch (Exception e){ e.printStackTrace(); }
+    }
 }
