@@ -112,7 +112,17 @@
         android:id="@+id/btn_start"
         android:layout_width="match_parent"
         android:layout_height="100dp"
-        app:srcCompat="@drawable/mic" />
+        app:srcCompat="@drawable/mic"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"/>
+    <Button
+        android:id="@+id/btn_continue"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#000000"
+        android:layout_marginVertical="5dp"
+        android:background="@drawable/round"
+        android:text="계속하기" />
 
     <Button
         android:id="@+id/btn_continue"
@@ -134,7 +144,9 @@
             android:layout_weight="1"
             android:textColor="#000000"
             android:layout_marginHorizontal="5dp"
-            android:text="영어 script 보기" />
+            android:background="@drawable/round"
+            android:text="영어 script 보기"
+            />
 
         <Button
             android:id="@+id/btn_korScr"
@@ -143,6 +155,7 @@
             android:layout_weight="1"
             android:textColor="#000000"
             android:layout_marginHorizontal="5dp"
+            android:background="@drawable/round"
             android:text="한글 script 보기" />
     </LinearLayout>
 
