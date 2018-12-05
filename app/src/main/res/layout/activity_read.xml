@@ -103,13 +103,8 @@
         android:text="학습하기"
         android:id="@+id/btn_study"
         android:textColor="#000000"
+        android:background="@drawable/round"
         />
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="뒤로가기"
-        android:id="@+id/btn_back"
-        android:textColor="#000000"
-        />
+
 
 </LinearLayout>

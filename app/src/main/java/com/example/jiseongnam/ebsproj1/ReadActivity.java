@@ -43,6 +43,7 @@ public class ReadActivity extends AppCompatActivity {
     int flag=1;
     private adapter newadapter = new adapter();
     Button study_btn;
+    Button back_btn;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -132,8 +133,10 @@ public class ReadActivity extends AppCompatActivity {
             }
         });
 
+
         removeAllPreferences(getApplicationContext());
     }
+
 
     private void setText_mp3(final adapter adapter){
 
